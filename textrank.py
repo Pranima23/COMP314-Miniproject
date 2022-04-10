@@ -58,6 +58,7 @@ class TextRank4Keyword():
                     pair = (word, sentence[j])
                     if pair not in token_pairs:
                         token_pairs.append(pair)
+        # print(token_pairs)
         return token_pairs
         
     def symmetrize(self, a):
@@ -74,17 +75,21 @@ class TextRank4Keyword():
             
         # Get Symmeric matrix
         g = self.symmetrize(g)
+        print(g)
         
         # Normalize matrix by column
         norm = np.sum(g, axis=0)
+        print(norm)
         g_norm = np.divide(g, norm, where=norm!=0) # this is ignore the 0 element in norm
-        
+        print(g_norm)
+
         return g_norm
 
     
     def get_keywords(self, number=10):
         """Print top number keywords"""
         node_weight = OrderedDict(sorted(self.node_weight.items(), key=lambda t: t[1], reverse=True))
+        print(len(node_weight))
         for i, (key, value) in enumerate(node_weight.items()):
             print(key + ' - ' + str(value))
             if i > number:
@@ -133,9 +138,12 @@ class TextRank4Keyword():
         
         self.node_weight = node_weight
 
-text = '''
-The Wandering Earth, described as China’s first big-budget science fiction thriller, quietly made it onto screens at AMC theaters in North America this weekend, and it shows a new side of Chinese filmmaking — one focused toward futuristic spectacles rather than China’s traditionally grand, massive historical epics. At the same time, The Wandering Earth feels like a throwback to a few familiar eras of American filmmaking. While the film’s cast, setting, and tone are all Chinese, longtime science fiction fans are going to see a lot on the screen that reminds them of other movies, for better or worse.
-'''
+import sys
+
+filename = sys.argv[-1]
+with open(filename) as f:
+    text = ''.join(f.readlines())
+
 tr4w = TextRank4Keyword()
-tr4w.analyze(text, candidate_pos = ['NOUN', 'PROPN'], window_size=4, lower=False)
+tr4w.analyze("Ram is a very good boy unlike Hari who is a bad boy.", candidate_pos = ['NOUN', 'PROPN', 'ADJ'], window_size=4, lower=False)
 tr4w.get_keywords(10)
