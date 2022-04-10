@@ -1,0 +1,18 @@
+Using GIS Site Suitability Analysis to Study Adaptability and Evolution of Life: Locating
+Springs in Mantle Units of Ophiolites
+Alexandrea Bowman, University of Rhode Island
+GIS is a powerful tool that can be used to locate springs sourced in ophiolites. The unique
+features associated with these springs include a reducing subsurface environment reacting at low
+temperatures producing high pH, Ca-rich formation fluids with high dissolved hydrogen and
+methane. Because of their unique chemical characteristics, these areas are often associated with
+microbes and are thought to be similar to the features that enabled life to evolve on Earth.
+Locating and sampling these springs could offer a deeper look into Earth's deep biosphere and
+the history of life on Earth. Springs have tradiitionally been located using expensive and time
+consuming field techniques. Field work can be dangerous. The goal of this study was to develop
+a model that could locate these unique geological features without first going into the field, thussaving time, money and reducing the risks associated with remote field localities. A GIS site
+suitability analysis works by overlaying existing geo-referenced data into a computer program
+and adding the different data sets after assigning a numerical value to the important fields. For
+this project, I used surface and ground water maps, geologic maps, a soil map, and a fault map
+for four counties in Northern California. The model has demonstrated that it is possible to use
+this time of model and apply it to a complex geologic area to produce a usable field map for
+future field work.

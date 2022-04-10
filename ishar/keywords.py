@@ -2,7 +2,7 @@ import numpy as np
 from collections import OrderedDict
 from nltk import sent_tokenize, word_tokenize, pos_tag
 from nltk.corpus import stopwords
-from .graph import Graph
+from graph import Graph
 
 stopwords = set(stopwords.words('english'))
 
