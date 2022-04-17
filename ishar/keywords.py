@@ -1,25 +1,28 @@
-import numpy as np
 from collections import OrderedDict
-from nltk import sent_tokenize, word_tokenize, pos_tag
-from nltk.corpus import stopwords
+
+import numpy as np
+import spacy
+from spacy.lang.en.stop_words import STOP_WORDS
+
 from graph import Graph
 
-stopwords = set(stopwords.words('english'))
+nlp = spacy.load("en_core_web_sm")
 
 def _set_stopwords(stop_words):
     """ Set additional stop words """
-    global stopwords
-    stopwords = stopwords.union(set(stop_words))
+    global STOP_WORDS
+    STOP_WORDS = STOP_WORDS.union(set(stop_words))
 
 def _get_sentences(text, valid_pos):
     """ Returns list of validated sentence """
-    sents = sent_tokenize(text)
+    doc = nlp(text)
+    sents = doc.sents
     sentences = []
     for sent in sents:
         words = []
-        for w, pos in pos_tag(word_tokenize(sent)):
-            if pos in valid_pos and w not in stopwords and w.isalpha():
-                words.append(w)
+        for w in sent:
+            if w.pos_ in valid_pos and w not in STOP_WORDS and w.text.isalpha():
+                words.append(w.text)
         sentences.append(words)
     return sentences
 
@@ -83,7 +86,7 @@ def _pagerank(graph, d, steps, convergence, total):
     
     return ranks
 
-def extract_keywords(text, stop_words=list(), valid_pos= ("NN", "NNP", "JJ",), window=4, d=0.85, steps=10, convergence=1e-5, total=10):
+def extract_keywords(text, stop_words=list(), valid_pos= ("NOUN", "PROPN", "ADJ",), window=4, d=0.85, steps=10, convergence=1e-5, total=10):
     """ Keyword Extraction using TextRank algorithm """
 
     # Add stop words if any
