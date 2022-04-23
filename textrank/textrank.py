@@ -6,6 +6,7 @@ import warnings
 from keywords import extract_keywords
 
 DEFAULT_WINDOW_SIZE = 4
+DEFAULT_TOTAL_WORDS = 0
 DEFAULT_DAMPING_FACTOR = 0.85
 
 def restricted_float(x):
@@ -22,7 +23,7 @@ def parse_args(args):
                             help="Either a string of comma separated stopwords or a path to a file which has comma separated stopwords in every line")
     parser.add_argument('--window', '-w', metavar="#window", type=int, default=DEFAULT_WINDOW_SIZE,
                             help="Window size for token pairs")
-    parser.add_argument('--total', '-t', metavar="#total", type=int,
+    parser.add_argument('--total', '-t', metavar="#total", type=int, default=DEFAULT_TOTAL_WORDS,
                             help="Total number of words to be ranked"),
     parser.add_argument('--damp', '-d', metavar="d", type=restricted_float, default=DEFAULT_DAMPING_FACTOR,
                             help="Float number (0,1] that defines the length of the summary. It's a proportion of the original text")

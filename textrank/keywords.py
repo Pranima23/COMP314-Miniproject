@@ -22,7 +22,7 @@ def _get_sentences(text, valid_pos):
         words = []
         for w in sent:
             if w.pos_ in valid_pos and w not in STOP_WORDS and w.text.isalpha():
-                words.append(w.text)
+                words.append(w.text.lower())
         sentences.append(words)
     return sentences
 
@@ -73,12 +73,12 @@ def _calculate_pr_weights(graph, d, steps, convergence):
             prev_pr = sum(pr)
     return pr
 
-def _pagerank(graph, d, steps, convergence, total):
+def _pagerank(graph, d, steps, convergence):
     """ Displays and returns ranks for keywords """
     weights = _calculate_pr_weights(graph, d, steps, convergence)
-    
+
     ranks = {w: weights[i] for w, i in graph.nodes.items()}
-    ranks =  OrderedDict(sorted(ranks.items(), key=lambda m: m[1], reverse=True)[:total])
+    ranks =  OrderedDict(sorted(ranks.items(), key=lambda m: m[1], reverse=True))
 
     print("Ranks: Word - Weight")
     for i, (k, v) in enumerate(ranks.items()):
@@ -86,9 +86,37 @@ def _pagerank(graph, d, steps, convergence, total):
     
     return ranks
 
-def extract_keywords(text, stop_words=list(), valid_pos= ("NOUN", "PROPN", "ADJ",), window=4, d=0.85, steps=10, convergence=1e-5, total=10):
+def _combine_adjacent_keywords(ranks, text, total):
+    """ Combine adjancent keywords in a sentence """
+    keywords = []
+    words = []
+    kranks = ranks.keys()
+    ranks = dict(ranks)
+    sents = [[word.strip().lower() for word in sent.split(" ")] for sent in text.split(".")]
+    for sent in sents:
+        word = []
+        l = len(sent)
+        for i in range(l):
+            if sent[i] in kranks and sent[i] not in words:
+                word.append(sent[i])
+                words.append(sent[i])
+                if not i + 1 == l:
+                    for j in range(i+1, l):
+                        if sent[j] in kranks:
+                            word.append(sent[j])
+                            words.append(sent[j])
+                        else:
+                            break
+                pw = sum([ranks[w] for w in word])    
+                keywords.append((" ".join(word), pw))
+                word = []
+    keywords = sorted(keywords, key=lambda x: x[1], reverse=True)
+    return keywords[:total]
+
+def extract_keywords(text, stop_words=list(), valid_pos= ("NOUN", "PROPN", "ADJ",), window=4, d=0.85, steps=10, convergence=1e-6, total=0):
     """ Keyword Extraction using TextRank algorithm """
 
+    ### Pre processing ###
     # Add stop words if any
     _set_stopwords(stop_words)
 
@@ -98,15 +126,22 @@ def extract_keywords(text, stop_words=list(), valid_pos= ("NOUN", "PROPN", "ADJ"
     # Get dict of tokens -> lemma (Vertices)
     tokens = _get_tokens(sentences)
 
+    ### Graph Formation ###
     # Build token pairs between windows in sentences (Edges)
     token_pairs = _get_token_pairs(window, sentences)
 
     # Build Graph: tokens = Vertices && token_pairs = Edges
     graph = _build_graph_matrix(tokens, token_pairs)
 
+    ### Ranking Algorithm ###
     # Implement Pagerank/Textrank algorithm to rank words
-    ranks = _pagerank(graph, d, steps, convergence, total)
-    return ranks
+    ranks = _pagerank(graph, d, steps, convergence,)
+
+    ### Post processing ###
+    # Combine adjacent keywords
+    keywords = _combine_adjacent_keywords(ranks, text, total or graph.v // 3)
+
+    return keywords
 
 if __name__ == "__main__":
-    extract_keywords("""Ram is a very good boy unlike Hari who is a bad boy.""")
+    extract_keywords("Ram is a good boy but Hari is a bad boy.")

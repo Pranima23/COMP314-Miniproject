@@ -31,6 +31,6 @@ class Graph:
 
     def __repr__(self):
         result = ""
-        for n, r in zip(self.nodes, self.graph):
+        for n, r in zip(self.nodes, self.graph): 
             result += str(n) + str(r) + "\n"
         return result
